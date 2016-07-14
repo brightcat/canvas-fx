@@ -42,7 +42,8 @@ engine.canvas.Engine = function(ctx, WIDTH, HEIGHT, requestFrame) {
     function baseAnimation(a) {
         var o = Object.create(null),
             playing = false,
-            elapsedTime = 0;
+            elapsedTime = 0,
+            cycle = a.cycle || 1;
 
         o.isPlaying = function() {
             return playing;
@@ -77,6 +78,8 @@ engine.canvas.Engine = function(ctx, WIDTH, HEIGHT, requestFrame) {
         return o;
     }
     e.animation = Object.create(null);
+    e.animation.cycle = Object.create(null);
+    e.animation.cycle.Infinite = -1;
     e.animation.Value = function(a) {
         if (!a.duration) {
             throw "duration must be set " + a;
@@ -84,7 +87,9 @@ engine.canvas.Engine = function(ctx, WIDTH, HEIGHT, requestFrame) {
         var o = baseAnimation(a),
             total = a.to - a.from,
             duration = a.duration,
-            value = a.from;
+            value = a.from,
+            cycleCount = 1,
+            isInfiniteCycle = a.cycle === e.animation.cycle.Infinite;
         a.node[a.value] = value;
         
         o.update = function(time) {
@@ -94,7 +99,14 @@ engine.canvas.Engine = function(ctx, WIDTH, HEIGHT, requestFrame) {
             value = delta * total;
             if (o.isDone()) {
                 value = total;
-                o.stop();
+                if (isInfiniteCycle) {
+                    value = a.from;
+                    o.setElapsedTime(0);
+                } else if (a.cycle >= cycleCount) {
+                    o.stop();
+                } else {
+                    cycleCount += 1;
+                }
             }
             a.node[a.value] = value;
         };

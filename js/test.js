@@ -43,7 +43,8 @@ function main() {
     var anim = e.animation.Value({
         from:0, to: 600,
         value:'x', node:rect,
-        duration: 3000
+        duration: 3000,
+        cycle: e.animation.cycle.Infinite
     });
     
     var animy = e.animation.Value({
@@ -52,7 +53,7 @@ function main() {
     });
     
     var animr = e.animation.Value({
-        from: 0, to:2*Math.PI, duration: 1500, node:rect, value:'radians'
+        from: 0, to:2*Math.PI, duration: 1500, node:rect, value:'radians', cycle: e.animation.cycle.Infinite
     });
     
 //    animr.play();
