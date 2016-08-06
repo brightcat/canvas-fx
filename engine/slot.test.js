@@ -12,13 +12,13 @@
     var slots = [slot1, slot2, slot3];
     var imageRenderer = renderer.Image();
     var groupRenderer = renderer.Group();
-    console.log(imageRenderer);
     engine.addRenderer(bc.Type.IMAGE, imageRenderer);
     engine.addRenderer(bc.Type.GROUP, groupRenderer);
     slots.forEach(function(slot) {
         engine.addNode(slot.getNode());
-    })
+    });
     
     window.engine = engine;
-    engine.start(); setInterval(function() { engine.stop(); }, 50);
+    engine.start();// setInterval(function() { engine.stop(); }, 50);
+    window.slot1 = slot1;
 })();

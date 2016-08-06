@@ -61,8 +61,13 @@ var bc = (function () {
 
             var _size = cols * rows;
             var s = Object.create(null);
-
-
+            
+            s.getHeight = function() {
+                return height;
+            };
+            s.getWidth = function(){ 
+                return width;
+            };
             s.image = function (idx) {
                 var ix = idx % cols;
                 var iy = Math.floor(idx / cols);
@@ -92,21 +97,58 @@ var bc = (function () {
             s._type = Type.SLOT;
             var sprites = spec.sprites;
             var group = bc.Group(spec);
+            
+            var length = sprites.size() * sprites.getHeight();
+            var maxHeight = 350/2 * 3;
+            var slideInIdx = spec.slideInIdx || 7;
+            var slideInPer = 0.0;
+            var IMG_HEIGHT = sprites.getHeight();
+            var SIZE = sprites.size();
+            
+            console.log(length, maxHeight, slideInIdx, slideInPer, IMG_HEIGHT, SIZE);
 
             s.roll = function (per) {
-
-            };
-
-            s.getNode = function () {
-                var img1 = sprites.image(6);
-                var img2 = sprites.image(0);
-                var img3 = sprites.image(1);
-                var images = [img1, img2, img3];
+                group.children = [];
+                var offset = length * per;
+                slideInIdx = Math.floor(offset / IMG_HEIGHT) % SIZE;
+                slideInPer = per * SIZE - slideInIdx;
+                
+                console.log(offset + " => " + slideInIdx + " => " + slideInPer);
+                
+                var h = maxHeight;
+                var img;
+                var idx = (slideInIdx + 1) % SIZE;
+                
+                if (slideInPer > 0) {
+                    var diff = IMG_HEIGHT * slideInPer;
+                    img = sprites.image(slideInIdx);
+                    img.sheight = diff;
+                    img.sy += IMG_HEIGHT - diff;
+                    group.children.push(img);
+                    h -= diff;
+                }
+                
+                while (h > 0) {
+                    img = sprites.image(idx);
+                    if (h < IMG_HEIGHT) {
+                        img.sheight = h;
+                    } else {
+                        img.sheight = IMG_HEIGHT;
+                    }
+                    idx = (idx + 1) % SIZE;
+                    h -= img.sheight;
+                    group.children.push(img);
+                };
+                
                 var offset = 350 / 2;
-                images.forEach(function (i, idx) {
+                group.children.forEach(function (i, idx) {
                     i.y = idx * offset;
                 });
-                group.children = images;
+                
+            };
+            s.roll(0);
+
+            s.getNode = function () {
                 return group;
             };
 
