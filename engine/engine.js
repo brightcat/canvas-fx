@@ -24,10 +24,15 @@ var Engine = (function() {
             });
             
             ctx.clearRect(0, 0, WIDTH, HEIGHT);
-            
-            nodes.forEach(function(n) {
+            function render (n) {
+                ctx.save();
                 renderers[n._type].render(ctx, n);
-            });
+                if (n.children && n.children.length > 0) {
+                    n.children.forEach(render);
+                }
+                ctx.restore();
+            }
+            nodes.forEach(render);
         };
         
         e.start = function() {
