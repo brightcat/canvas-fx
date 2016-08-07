@@ -7,7 +7,7 @@ var renderer = (function() {
             
             _img.render = function(ctx, img) {
                 ctx.translate(img.x, img.y);
-                ctx.drawImage(img.image, img.sx, img.sy, img.swidth, img.sheight, 0, 0, img.width, img.height);
+                ctx.drawImage(img.image, img.s.x, img.s.y, img.s.width, img.s.height, 0, 0, img.width, img.height);
             };
             
             return _img;

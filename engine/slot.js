@@ -1,6 +1,14 @@
 var bc = (function () {
     var _bc = Object.create(null);
 
+    function Dim(x,y,width,height) {
+        var dim = Object.create(null);
+        dim.x = x;
+        dim.y = y;
+        dim.width = width;
+        dim.height = height;
+        return dim;
+    };
     _bc.Type = (function () {
         var type = Object.create(null);
 
@@ -12,23 +20,20 @@ var bc = (function () {
 
     _bc.Node = (function () {
         return function (type, x, y, width, height) {
-            var node = Object.create(null);
-            node.x = x;
-            node.y = y;
-            node.width = width;
+            var node = Dim(x,y,width,height);
             node._type = type;
-            node.height = height;
             return node;
         };
     })();
 
     var Type = _bc.Type;
     var Node = _bc.Node;
-
+    
     _bc.Image = (function () {
         return function (image, x, y, width, height) {
             var _image = Node(Type.IMAGE, x, y, width, height);
             _image.image = image;
+            _image.s = Dim(x,y,width,height);
             return _image;
         };
     })();
@@ -72,10 +77,10 @@ var bc = (function () {
                 var ix = idx % cols;
                 var iy = Math.floor(idx / cols);
                 var io = bc.Image(img, 0, 0, width, height);
-                io.sx = ix * width;
-                io.sy = iy * height;
-                io.swidth = width;
-                io.sheight = height;
+                io.s.x = ix * width;
+                io.s.y = iy * height;
+                io.s.width = width;
+                io.s.height = height;
                 return io;
             };
 
@@ -108,6 +113,7 @@ var bc = (function () {
             console.log(length, maxHeight, slideInIdx, slideInPer, IMG_HEIGHT, SIZE);
 
             s.roll = function (per) {
+                var dy = 0;
                 group.children = [];
                 var offset = length * per;
                 slideInIdx = Math.floor(offset / IMG_HEIGHT) % SIZE;
@@ -124,8 +130,10 @@ var bc = (function () {
                     img = sprites.image(slideInIdx);
                     img.sheight = diff;
                     img.sy += IMG_HEIGHT - diff;
+                    img.y = dy;
                     group.children.push(img);
                     h -= diff;
+                    dy += diff;
                 }
                 
                 while (h > 0) {
@@ -135,16 +143,14 @@ var bc = (function () {
                     } else {
                         img.sheight = IMG_HEIGHT;
                     }
+                    img.y = dy;
+                    dy += img.sheight;
                     idx = (idx + 1) % SIZE;
                     h -= img.sheight;
                     group.children.push(img);
                 };
                 
-                var offset = 350 / 2;
-                group.children.forEach(function (i, idx) {
-                    i.y = idx * offset;
-                });
-                
+                console.log(group.children);
             };
             s.roll(0);
 
