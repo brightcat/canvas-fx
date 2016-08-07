@@ -98,17 +98,18 @@ var bc = (function () {
 
     _bc.Slot = (function () {
         return function (spec) {
-            var s = Object.create(null);
-            s._type = Type.SLOT;
             var sprites = spec.sprites;
-            var group = bc.Group(spec);
-            
-            var length = sprites.size() * sprites.getHeight();
-            var maxHeight = 350/2 * 3;
-            var slideInIdx = spec.slideInIdx || 7;
-            var slideInPer = 0.0;
             var IMG_HEIGHT = sprites.getHeight();
             var SIZE = sprites.size();
+            
+            var s = Object.create(null);
+            s._type = Type.SLOT;
+            var group = bc.Group(spec);
+            
+            var length = SIZE * IMG_HEIGHT;
+            var maxHeight = IMG_HEIGHT * 3;
+            var slideInIdx = spec.slideInIdx || SIZE - 1;
+            var slideInPer = 0.0;
             
             console.log(length, maxHeight, slideInIdx, slideInPer, IMG_HEIGHT, SIZE);
 
@@ -118,6 +119,7 @@ var bc = (function () {
                 var offset = length * per;
                 slideInIdx = Math.floor(offset / IMG_HEIGHT) % SIZE;
                 slideInPer = per * SIZE - slideInIdx;
+                slideInIdx = SIZE - 1 - slideInIdx;
                 
                 console.log(offset + " => " + slideInIdx + " => " + slideInPer);
                 
@@ -128,8 +130,9 @@ var bc = (function () {
                 if (slideInPer > 0) {
                     var diff = IMG_HEIGHT * slideInPer;
                     img = sprites.image(slideInIdx);
-                    img.sheight = diff;
-                    img.sy += IMG_HEIGHT - diff;
+                    img.s.height = diff;
+                    img.height = diff;
+                    img.s.y += IMG_HEIGHT - diff;
                     img.y = dy;
                     group.children.push(img);
                     h -= diff;
@@ -139,14 +142,15 @@ var bc = (function () {
                 while (h > 0) {
                     img = sprites.image(idx);
                     if (h < IMG_HEIGHT) {
-                        img.sheight = h;
+                        img.s.height = h;
+                        img.height = h;
                     } else {
-                        img.sheight = IMG_HEIGHT;
+                        img.s.height = IMG_HEIGHT;
                     }
                     img.y = dy;
-                    dy += img.sheight;
+                    dy += img.s.height;
                     idx = (idx + 1) % SIZE;
-                    h -= img.sheight;
+                    h -= img.s.height;
                     group.children.push(img);
                 };
                 
