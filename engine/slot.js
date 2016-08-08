@@ -69,6 +69,42 @@ var bc = (function () {
             return s;
         }
     })();
+    
+    _bc.Spin = (function() {
+        return function(slot, duration, startPosition) {
+            var a = Object.create(null);
+            
+            var running = false;
+            var total = startPosition;
+            
+            a.update = function(delta) {
+                total += delta / duration;
+                var e = 1 - total;
+                if (e < 0.000001) {
+                    total = 0;
+                }
+                slot.roll(total);
+            };
+            
+            a.reset = function() {
+                total = 0;
+            };
+            
+            a.isPlaying = function() {
+                return running;
+            };
+            
+            a.play = function() {
+                running = true;
+            };
+            
+            a.stop = function() {
+                running = false;
+            };
+            
+            return a;
+        };
+    })();
 
     return _bc;
 })();
