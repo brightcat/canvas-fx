@@ -24,5 +24,21 @@ var renderer = (function() {
         };
     })();
     
+    r.Rectangle = (function() {
+        return function() {
+            var r = Object.create(null);
+            
+            r.render = function(ctx, rect) {
+                ctx.translate(rect.x, rect.y);
+                if (rect.fill) {
+                    ctx.fillStyle = rect.fill;
+                }
+                ctx.fillRect(0, 0, rect.width, rect.height);
+            };
+            
+            return r;
+        };
+    })();
+    
     return r;
 })();
