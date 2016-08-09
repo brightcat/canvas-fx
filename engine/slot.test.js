@@ -10,9 +10,9 @@
     var slot2 = bc.Slot({sprites:sprites,x:200, y:20});
     var slot3 = bc.Slot({sprites:sprites, x:400, y:20});
     var slots = [slot1, slot2, slot3];
-    var anim1 = bc.Spin(slot1, 2000, 0);
-    var anim2 = bc.Spin(slot2, 2000, 0);
-    var anim3 = bc.Spin(slot3, 2000, 0);
+    var anim1 = bc.Spin(slot1, 3000, slot1.position());
+    var anim2 = bc.Spin(slot2, 3000, slot2.position());
+    var anim3 = bc.Spin(slot3, 3000, slot3.position());
     var anims =[anim1,anim2,anim3];
     
     var imageRenderer = renderer.Image();
@@ -44,6 +44,8 @@
     window._stop = function() {
         anims.forEach(function(a) {
             a.stop();
+            var distance = a.slot().distance(4);
+            console.log(distance + " = " + distance, a.slot().position());
         });
     };
 })();
