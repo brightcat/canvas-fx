@@ -71,7 +71,7 @@ var bc = (function () {
             };
             
             s.getPosition = function(idx) {
-                return ((idx + .5) * IMG_HEIGHT) / LENGTH;
+                return ((idx + 1) % SIZE) * IMG_HEIGHT / LENGTH;
             };
             
             s.distance = function(idx) {
@@ -103,7 +103,6 @@ var bc = (function () {
                     total = 0;
                 } else if (stopping) {
                     var ne = Math.abs(pos - total);
-                    console.log("ne", ne);
                     if (ne < 0.01) {
                         total = pos;
                         running = false;

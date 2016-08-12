@@ -99,7 +99,7 @@ var node = (function() {
             });
 
             return s;
-        }
+        };
     })();
 
     return n;

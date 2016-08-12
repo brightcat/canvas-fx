@@ -34,25 +34,38 @@
     engine.start();// setInterval(function() { engine.stop(); }, 50);
     window.slot1 = slot1;
     window.anims = anims;
-    var result;
-    window._start = function() {
-        result = [8,8,8].map(roll);
-        console.log("result", result);
+    function startRoll() {
         anims.forEach(function(a, i) {
             var id = setInterval(function() {
                 a.play();
                 clearInterval(id);
             }, i * 500);
         });
-    };
+    }
+    window._start = startRoll;
     function roll(e) {
         return Math.floor(Math.random()*e);
     }
-    window._stop = function() {
+    function stopRoll(result, btn) {
         anims.forEach(function(a,idx) {
             a.stopOn(result[idx]);
             var distance = a.slot().distance(4);
             console.log(distance + " = " + distance, a.slot().position());
         });
+        btn.removeAttribute('disabled');
+    }    
+    window._stop = stopRoll;
+    
+    var btnSpin = document.getElementById('btn-spin');
+    btnSpin.onclick = function(e) {
+        btnSpin.setAttribute('disabled','disabled');
+        startRoll();
+        
+        var id = setInterval(function() {
+            var result = [8,8,8].map(roll);
+            console.log("result", result);
+            stopRoll(result, btnSpin);
+            clearInterval(id);
+        }, 2000);
     };
 })();
