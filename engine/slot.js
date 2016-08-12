@@ -70,6 +70,10 @@ var bc = (function () {
                 return slideInPer;
             };
             
+            s.getPosition = function(idx) {
+                return ((idx + .5) * IMG_HEIGHT) / LENGTH;
+            };
+            
             s.distance = function(idx) {
                 var idxPos = IMG_HEIGHT * (idx + .5);
                 return slideInPer - (idxPos / LENGTH);
@@ -89,14 +93,29 @@ var bc = (function () {
             
             var running = false;
             var total = startPosition || slot.position();
+            var stopping = false;
+            var pos;
             
             a.update = function(delta) {
                 total += delta / duration;
                 var e = 1 - total;
                 if (e < 0.000001) {
                     total = 0;
+                } else if (stopping) {
+                    var ne = Math.abs(pos - total);
+                    console.log("ne", ne);
+                    if (ne < 0.01) {
+                        total = pos;
+                        running = false;
+                        stopping = false;
+                    }
                 }
                 slot.roll(total);
+            };
+            
+            a.stopOn = function(idx) {
+                pos = slot.getPosition(idx);
+                stopping = true;
             };
             
             a.reset = function() {
