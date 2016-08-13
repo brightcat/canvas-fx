@@ -46,25 +46,35 @@
     function roll(e) {
         return Math.floor(Math.random()*e);
     }
-    function stopRoll(result, btn) {
-        anims.forEach(function(a,idx) {
-            a.stopOn(result[idx]);
-            var distance = a.slot().distance(4);
-            console.log(distance + " = " + distance, a.slot().position());
+    function stopRoll(result, btn, idx, size) {
+        if (idx === size) {
+            btn.removeAttribute('disabled');
+            return;
+        }
+        var p = anims[idx].stopOn(result[idx]);
+        console.log("p", idx);
+        p.then(function(pos) {
+            stopRoll(result, btn, idx+1, size);
         });
-        btn.removeAttribute('disabled');
+//        anims.forEach(function(a,idx) {
+//            var p = a.stopOn(result[idx]);
+//            var distance = a.slot().distance(4);
+//            
+//            console.log(distance + " = " + distance, a.slot().position());
+//            p.then(function(pos) { console.log("stopped",idx,"on",pos)});
+//        });
     }    
     window._stop = stopRoll;
     
     var btnSpin = document.getElementById('btn-spin');
     btnSpin.onclick = function(e) {
-        btnSpin.setAttribute('disabled','disabled');
+        btnSpin.setAttribute('disabled','disabled');       
         startRoll();
         
         var id = setInterval(function() {
             var result = [8,8,8].map(roll);
             console.log("result", result);
-            stopRoll(result, btnSpin);
+            stopRoll(result, btnSpin, 0, 3);
             clearInterval(id);
         }, 2000);
     };

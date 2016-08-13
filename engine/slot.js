@@ -95,6 +95,7 @@ var bc = (function () {
             var total = startPosition || slot.position();
             var stopping = false;
             var pos;
+            var _resolve;
             
             a.update = function(delta) {
                 total += delta / duration;
@@ -107,6 +108,8 @@ var bc = (function () {
                         total = pos;
                         running = false;
                         stopping = false;
+                        _resolve(total);
+                        _resolve = null;
                     }
                 }
                 slot.roll(total);
@@ -115,6 +118,12 @@ var bc = (function () {
             a.stopOn = function(idx) {
                 pos = slot.getPosition(idx);
                 stopping = true;
+                var p = new Promise(function(resolve, reject) {
+                    console.log("in promise", idx);
+                    _resolve = resolve;
+                });
+                
+                return p;
             };
             
             a.reset = function() {
