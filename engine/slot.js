@@ -71,7 +71,14 @@ var bc = (function () {
             };
             
             s.getPosition = function(idx) {
-                return ((idx + 1) % SIZE) * IMG_HEIGHT / LENGTH;
+                var i = (idx+1) % SIZE;
+                if (i < 0) { i = SIZE + i; }
+                var pos = i * IMG_HEIGHT / LENGTH;
+                if (i === SIZE-1){ 
+                    pos = 0.0;
+                }
+                console.log("pos",pos,i);
+                return pos;
             };
             
             s.distance = function(idx) {
@@ -102,7 +109,8 @@ var bc = (function () {
                 var e = 1 - total;
                 if (e < 0.000001) {
                     total = 0;
-                } else if (stopping) {
+                } 
+                if (stopping) {
                     var ne = Math.abs(pos - total);
                     if (ne < 0.01) {
                         total = pos;
@@ -119,7 +127,6 @@ var bc = (function () {
                 pos = slot.getPosition(idx);
                 stopping = true;
                 var p = new Promise(function(resolve, reject) {
-                    console.log("in promise", idx);
                     _resolve = resolve;
                 });
                 

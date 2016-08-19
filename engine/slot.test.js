@@ -21,7 +21,7 @@
     engine.addRenderer(node.Type.IMAGE, imageRenderer);
     engine.addRenderer(node.Type.GROUP, groupRenderer);
     engine.addRenderer(node.Type.RECTANGLE, renderer.Rectangle());
-
+    engine.addNode(node.Image(image,canvas.width-750*.7,0,750*.7,350*.7));
     anims.forEach(function(a, idx) {
         engine.addAnimation(a);
     });
@@ -52,7 +52,6 @@
             return;
         }
         var p = anims[idx].stopOn(result[idx]);
-        console.log("p", idx);
         p.then(function(pos) {
             stopRoll(result, btn, idx+1, size);
         });
