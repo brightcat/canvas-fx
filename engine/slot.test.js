@@ -6,6 +6,22 @@
     image.src = 'img/test.png';
     var sprites = node.SpriteSheet(image,4,2,750/4,350/2);
     
+    var IMG_WIDTH = 750/4;
+    var IMG_HEIGHT = 350/2;
+    var ratio = canvas.height/(IMG_HEIGHT*8);
+    console.log("ratio", ratio, canvas.height, IMG_HEIGHT, IMG_HEIGHT*8);
+    var _h = ratio*IMG_HEIGHT;
+    var _w = ratio*IMG_WIDTH;
+    
+    var _short = sprites.getImages(_w, _h);
+    console.log(_short);
+    var _desk = node.Group({x:canvas.width - _w});
+    _short.forEach(function(s,idx) {
+        s.y = _h * idx;
+        _desk.children.push(s);
+    });
+    
+    
     var slot1 = bc.Slot({sprites:sprites,x:20,y:20});
     var slot2 = bc.Slot({sprites:sprites,x:200, y:20});
     var slot3 = bc.Slot({sprites:sprites, x:400, y:20});
@@ -15,13 +31,12 @@
     var anim2 = bc.Spin(slot2, speed, slot2.position());
     var anim3 = bc.Spin(slot3, speed, slot3.position());
     var anims =[anim1,anim2,anim3];
-    
+    window.slot1 = slot1;
     var imageRenderer = renderer.Image();
     var groupRenderer = renderer.Group();
     engine.addRenderer(node.Type.IMAGE, imageRenderer);
     engine.addRenderer(node.Type.GROUP, groupRenderer);
     engine.addRenderer(node.Type.RECTANGLE, renderer.Rectangle());
-    engine.addNode(node.Image(image,canvas.width-750*.7,0,750*.7,350*.7));
     anims.forEach(function(a, idx) {
         engine.addAnimation(a);
     });
@@ -30,6 +45,8 @@
         engine.addNode(slot.getNode());
     });
     
+    engine.addNode(_desk);
+    window.desk = _desk;
     window.engine = engine;
     engine.start();// setInterval(function() { engine.stop(); }, 50);
     window.slot1 = slot1;

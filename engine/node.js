@@ -89,6 +89,20 @@ var node = (function() {
                 io.s.height = height;
                 return io;
             };
+            
+            s.getImages = function(width, height) {
+                var images = [];
+                var i = 0;
+                var img;
+                for (; i < _size; i++) {
+                    img = s.image(i);
+                    img.width = width || img.width;
+                    img.height = height || img.height;
+                    images.push(img);
+                }
+                
+                return images;
+            };
 
             s.size = function () {
                 return _size;
