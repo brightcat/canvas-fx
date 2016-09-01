@@ -1,8 +1,10 @@
 var bc = (function () {
     var _bc = Object.create(null);
-
+    var slotCounter = 0;
     _bc.Slot = (function () {
         return function (spec) {
+            var slotId = slotCounter++;
+            var seq = 0;
             var sprites = spec.sprites;
             var IMG_HEIGHT = sprites.getHeight();
             var SIZE = sprites.size();
@@ -15,32 +17,31 @@ var bc = (function () {
             var slideInIdx = spec.slideInIdx || Math.floor(Math.random()*SIZE);
             var slideInPer = IMG_HEIGHT/LENGTH*(slideInIdx + .5);
             
-//            console.log(length, maxHeight, slideInIdx, slideInPer, IMG_HEIGHT, SIZE);
-            function updateSlide(per) {
-                var offset = LENGTH * per;
-                var idx = Math.floor(offset / IMG_HEIGHT) % SIZE;
-                var inPer = per * SIZE - idx;
-                idx = SIZE - 1 - idx;
-//                console.log(offset + " => " + idx + " => " + inPer);
-                return [idx,inPer];
-            }
-            
-            
-            var _idx = 0;
-            
             s.roll = function(r) {
-                console.log("idx", _idx);
+                var size = r * LENGTH;
+                var idx = Math.floor(size / IMG_HEIGHT) % SIZE;
+                var sr = (size % IMG_HEIGHT) / IMG_HEIGHT;
+                if (slotId === 0)
+                console.log(seq++, slotId, "s.roll", r, idx, sr, size, LENGTH);
+                s.slotRoll(idx, sr);
+            };
+            
+            s.slotRoll =function(_idx, r) {
                 group.children = [];
                 var e = 1. - r;
                 if (e < .0001) {
                     r = 0.0;
                     _idx = (_idx + 1) % SIZE;
                 }
+                
+                // 1
                 var offset = IMG_HEIGHT * (1 + r);
                 var dy = offset;
                 var img = sprites.image(_idx);
                 img.y = dy;
                 group.children.push(img);
+                
+                // bottom idx + SIZE
                 dy += img.height;
                 var idx = (_idx + SIZE-1) % SIZE;
                 img = sprites.image(idx);
@@ -52,6 +53,7 @@ var bc = (function () {
                 }
                 group.children.push(img);
                 
+                // top idx + 1
                 offset -= IMG_HEIGHT;
                 idx = (_idx+1)%SIZE;
                 img = sprites.image(idx);
@@ -70,60 +72,14 @@ var bc = (function () {
                 
             };
 
-            s.temp = function (per) {
-                var dy = 0;
-                group.children = [];
-                var slide = updateSlide(per);
-                slideInIdx = slide[0];
-                slideInPer = slide[1];
-                
-                var h = maxHeight;
-                var img;
-                var idx = (slideInIdx + 1) % SIZE;
-                
-                if (slideInPer > 0) {
-                    var diff = IMG_HEIGHT * slideInPer;
-                    img = images[slideInIdx];
-                    img.reset();
-                    img.s.height = diff;
-                    img.height = diff;
-                    img.s.y += IMG_HEIGHT - diff;
-                    img.y = dy;
-                    group.children.push(img);
-                    h -= diff;
-                    dy += diff;
-                }
-                
-                while (h > 0) {
-                    img = images[idx];
-                    img.reset();
-                    if (h < IMG_HEIGHT) {
-                        img.s.height = h;
-                        img.height = h;
-                    } else {
-                        img.s.height = IMG_HEIGHT;
-                        img.height = IMG_HEIGHT;
-                    }
-                    img.y = dy;
-                    dy += img.s.height;
-                    idx = (idx + 1) % SIZE;
-                    h -= img.s.height;
-                    group.children.push(img);
-                };
-                
-            };
             s.roll(slideInPer);
             s.position = function() {
                 return slideInPer;
             };
             
             s.getPosition = function(idx) {
-                var i = (idx+1) % SIZE;
-                if (i < 0) { i = SIZE + i; }
+                var i = idx;
                 var pos = i * IMG_HEIGHT / LENGTH;
-                if (i === SIZE-1){ 
-                    pos = 0.0;
-                }
                 console.log("pos",pos,i);
                 return pos;
             };
@@ -159,7 +115,7 @@ var bc = (function () {
                 } 
                 if (stopping) {
                     var ne = Math.abs(pos - total);
-                    if (ne < 0.01) {
+                    if (ne < 0.0001) {
                         total = pos;
                         running = false;
                         stopping = false;
