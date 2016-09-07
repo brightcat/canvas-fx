@@ -9,7 +9,6 @@
     var IMG_WIDTH = 750/4;
     var IMG_HEIGHT = 350/2;
     var ratio = canvas.height/(IMG_HEIGHT*8);
-    console.log("ratio", ratio, canvas.height, IMG_HEIGHT, IMG_HEIGHT*8);
     var _h = ratio*IMG_HEIGHT;
     var _w = ratio*IMG_WIDTH;
     
@@ -26,7 +25,7 @@
     var slot2 = bc.Slot({sprites:sprites,x:200, y:20});
     var slot3 = bc.Slot({sprites:sprites, x:400, y:20});
     var slots = [slot1, slot2, slot3];
-    var speed = 2500;
+    var speed = 1900;
     var anim1 = bc.Spin(slot1, speed, slot1.position());
     var anim2 = bc.Spin(slot2, speed, slot2.position());
     var anim3 = bc.Spin(slot3, speed, slot3.position());

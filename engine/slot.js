@@ -1,10 +1,7 @@
 var bc = (function () {
     var _bc = Object.create(null);
-    var slotCounter = 0;
     _bc.Slot = (function () {
         return function (spec) {
-            var slotId = slotCounter++;
-            var seq = 0;
             var sprites = spec.sprites;
             var IMG_HEIGHT = sprites.getHeight();
             var SIZE = sprites.size();
@@ -21,18 +18,11 @@ var bc = (function () {
                 var size = r * LENGTH;
                 var idx = Math.floor(size / IMG_HEIGHT) % SIZE;
                 var sr = (size % IMG_HEIGHT) / IMG_HEIGHT;
-                if (slotId === 0)
-                console.log(seq++, slotId, "s.roll", r, idx, sr, size, LENGTH);
                 s.slotRoll(idx, sr);
             };
             
             s.slotRoll =function(_idx, r) {
                 group.children = [];
-                var e = 1. - r;
-                if (e < .0001) {
-                    r = 0.0;
-                    _idx = (_idx + 1) % SIZE;
-                }
                 
                 // 1
                 var offset = IMG_HEIGHT * (1 + r);
@@ -60,11 +50,13 @@ var bc = (function () {
                 img.y = offset;
                 group.children.push(img);
                 
+                var diffOffset = IMG_HEIGHT-offset;
+                
                 if (offset > 0) {
                     idx = (idx + 1) % SIZE;
                     img = sprites.image(idx);
                     img.y = 0;
-                    img.s.y = IMG_HEIGHT - offset;
+                    img.s.y += diffOffset;
                     img.height = offset;
                     img.s.height = offset;
                     group.children.push(img);
@@ -80,7 +72,6 @@ var bc = (function () {
             s.getPosition = function(idx) {
                 var i = idx;
                 var pos = i * IMG_HEIGHT / LENGTH;
-                console.log("pos",pos,i);
                 return pos;
             };
             

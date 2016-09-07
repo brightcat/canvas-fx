@@ -57,6 +57,13 @@ var Engine = (function() {
             renderers[type] = r;
         };
         
+        e.removeNode = function(n) {
+            var idx = nodes.indexOf(n);
+            if (idx !== -1) {
+                nodes.splice(idx,1);
+            }
+        };
+        
         return e;
     };
 })();
